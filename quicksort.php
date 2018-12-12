@@ -4,16 +4,14 @@ $tam = count($vetor) - 1;
 
 echo "\nVETOR DESORDENADO\n";
 for ($i = 0; $i <= $tam; $i++){
-		echo $vetor[$i], " ";
+	echo $vetor[$i]." ";
 }
-echo "\n\n";
 
 quick_sort($vetor, 0, $tam);
 
-
-echo "VETOR ORDENADO\n";
+echo "\n\nVETOR ORDENADO\n";
 for ($i = 0; $i <= $tam; $i++){
-		echo $vetor[$i], " ";
+	echo $vetor[$i]." ";
 }
 echo "\n\n";
 
