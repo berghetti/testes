@@ -1,3 +1,4 @@
+// compile gcc bandwith.c -o bandwith
 
 #include <stdio.h>
 #include <stdlib.h>
