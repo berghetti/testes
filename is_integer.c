@@ -36,13 +36,14 @@ is_integer ( float n, int precision, int round )
 int
 main ( int argc, const char **argv )
 {
-  if ( argc != 2 )
+  if ( argc != 4  )
     {
-      printf ( "Usage: %s float\n", argv[0] );
+      printf ( "Usage: %s float precision round\n"
+               "Ex: %s 1.0007 3 0\n", argv[0], argv[0] );
       return EXIT_FAILURE;
     }
 
-  if ( is_integer ( atof ( argv[1] ), 2, 1 ) )
+  if ( is_integer ( atof ( argv[1] ), atoi(argv[2]), atoi(argv[3]) ) )
     puts ( "Is integer" );
   else
     puts ( "Not is integer" );

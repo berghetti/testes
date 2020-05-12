@@ -90,6 +90,8 @@ human_readable ( char *buffer, const size_t len_buff, uint64_t bytes )
         {
           integer = is_integer ( val, DECIMAL_PLACES, round );
 
+          printf("val - %f\n", val);
+
           decimals = ( ( uint32_t ) val < ACCURACY )
                          ? !integer ? DECIMAL_PLACES : 0
                          : 0;
