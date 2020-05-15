@@ -1,4 +1,22 @@
 
+/*
+ *  Copyright (C) 2020 Mayco S. Berghetti
+ *
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,7 +24,7 @@
 #include <unistd.h>
 
 #define PROG_NAME "tline"
-#define VERSION "0.1.0"
+#define VERSION "0.0.1"
 
 #define BUFF_STDIN 1024
 
@@ -37,6 +55,11 @@ usage ( void )
            "    " PROG_NAME
            " file.c -s -l 3 -d \"novo conteudo da linha 3\"\n" );
 }
+
+// int copy(void *dest, void)
+// {
+//   for (int i = )
+// }
 
 int
 main ( int argc, char **argv )
@@ -137,6 +160,7 @@ main ( int argc, char **argv )
   for ( ; optind < argc; optind++ )
     {
       file = argv[optind];
+      printf ( "Alterando: %s\n", file );
 
       // abre o arquivo para leitura
       FILE *file_r = fopen ( file, "rb" );
@@ -180,6 +204,7 @@ main ( int argc, char **argv )
                     file,
                     mod_linha - skip_line - 1 );
           free ( buffer );
+          fclose ( file_r );
           continue;
         }
 
@@ -194,15 +219,16 @@ main ( int argc, char **argv )
       // adicionar conteudo, desloca linha atual para baixo
       if ( !swap_content_line )
         {
+          puts("aqui");
           // se não fizer o cast de pos_line para int, o i é tratado como
           // unsigned na comaração e assim numca sera menor que 0 (caso seja a
           // primeira linha), e o for numca termina.
           for ( int i = len_file_r; i >= ( int ) pos_line; i-- )
             buffer[i + new_value_l] = buffer[i];
 
-          // copia "new value" na posição correta
-          for ( size_t i = 0; i < new_value_l; i++ )
-            buffer[i + pos_line] = new_value[i];
+          // for ( size_t i = 0; i < new_value_l; i++ )
+          //   buffer[i + pos_line] = new_value[i];
+          memcpy(buffer + pos_line, new_value, new_value_l);
 
           write_len = len_file_r + new_value_l;
         }
@@ -241,12 +267,6 @@ main ( int argc, char **argv )
 
           write_len = len_file_r - ( len_cur_line - new_value_l );
         }
-      else
-        {
-          fprintf(stderr, "Erro interno desconhecido\n");
-          free(buffer);
-          return EXIT_FAILURE;
-        }
 
       // abre para escrita
       FILE *file_w = fopen ( file, "wb" );
@@ -265,11 +285,8 @@ main ( int argc, char **argv )
           continue;
         }
 
-      fclose ( file_w );
       free ( buffer );
-
-      printf ( "Alterado: %s\n", file );
-
+      fclose ( file_w );
     }
 
   if ( read_stdin )
