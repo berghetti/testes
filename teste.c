@@ -1,39 +1,48 @@
+#include <ncurses.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-
-
-int main (int argc, char **argv)
+int
+main ( void )
 {
+  initscr ();
 
-  int opt;
-  while( (opt = getopt(argc, argv, "abcd")) != -1)
+  // imprime o caractere corretamente, sem atributos
+  addch ( ACS_LTEE );
+  refresh ();
+
+  getch ();
+
+  // buffer que vai receber o conteudo da linha, detalhe para o tipo do dado
+  // que armazena no mesmo byte o caracter e os atributos
+  chtype line[COLS];
+
+  // copia toda a linha da janela para line,
+  // ou melhor copia até COLS - 1 caracteres na linha e coloca NULL no fim.
+  mvinchnstr ( 0, 0, line, COLS );
+
+  // volta o cursor para posição que desejamos alterar
+  move ( 0, 0 );
+
+  int i = 0;
+  // esse loop só termina no fim da linha (NULL), e não até o fim do caracter,
+  // caso a inteção for alterar apenas do caracter precisa limitar o loop de
+  // outra forma...
+  while ( line[i] )
     {
-      switch (opt)
-        {
-          case 'a':
-            puts("a");
-            break;
-          case 'b':
-            puts("b");
-            break;
-          case 'c':
-            puts("c");
-            break;
-          case 'd':
-            puts("d");
-            break;
-        }
+      // altera o byte e deixa ligado apenas os bits corresponde ao caracter,
+      // o pulo do gato aqui é a macro A_ALTCHARSET, que corresponde aos bits
+      // de caracteres extendidos referenciados pelas macros ACS_*
+      line[i] &= A_CHARTEXT | A_ALTCHARSET;
+
+      // depois do byte "limpo", adicionamos o atributo que queremos
+      line[i] |= A_REVERSE;
+
+      addch ( line[i++] );
     }
 
-  printf("argc - %d\noptind - %d\n", argc, optind);
+  refresh ();
 
-  printf("argv[0] - %s\n", argv[0]);
-  printf("argv[1] - %s\n", argv[1]);
-  printf("argv[2] - %s\n", argv[2]);
-  printf("argv[3] - %s\n", argv[3]);
-  printf("argv[4] - %s\n", argv[4]);
+  getch ();
+  endwin ();
+
   return 0;
 }
