@@ -1,4 +1,4 @@
-http://www.microhowto.info/howto/capture_ethernet_frames_using_an_af_packet_ring_buffer_in_c.html
+// http://www.microhowto.info/howto/capture_ethernet_frames_using_an_af_packet_ring_buffer_in_c.html
 
 int fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
 if (fd == -1) {

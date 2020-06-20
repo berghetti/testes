@@ -1,0 +1,1 @@
+for i in ; do ../testes/tline src/translate.h < ../testes/license; done;
