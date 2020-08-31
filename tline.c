@@ -25,7 +25,7 @@ usage ( void )
            "\n"
            "<options>\n"
            "-l <line>           especifica a linha do arquivo a ser alterada, "
-           "1 é default\n"
+                                "1 é default\n"
            "-s                  troca o conteudo da linha atual pelo novo "
            "conteudo\n"
            "-d \"novo conteudo\"  conteudo que sera adicionado\n"
