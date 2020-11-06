@@ -51,4 +51,5 @@ else
   exit 1
 fi
 
+echo $LINK
 vlc $LINK

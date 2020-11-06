@@ -21,5 +21,6 @@ LINK=$(grep "videoUrl" /tmp/page.txt |cut -d "," -f 3 | cut -d "\"" -f 4 | sed -
 
 rm /tmp/page.txt
 
+echo "Opening $LINK"
 
 qvlc $LINK

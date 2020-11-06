@@ -22,5 +22,34 @@ int main(void)
   printf("\nsizeof struct tcphdr - %ld\n", sizeof(struct tcphdr));
   printf("\nsizeof struct udphdr - %ld\n", sizeof(struct udphdr)); 
 
+  struct teste
+  {
+    int a;
+    int b;
+    int c;
+    char d;
+  };
 
+  struct teste t;
+  struct teste *tp;
+  struct teste **tpp;
+
+
+  printf("\nsizeof struct teste - %ld\n", sizeof(t));
+  printf("\nsizeof pointer to struct teste - %ld\n", sizeof(tp));
+
+  printf("\nsizeof pointer to struct teste - %ld\n", sizeof(*tp));
+  printf("\nsizeof pointer to pointer to struct teste - %ld\n", sizeof(*tpp));
 }
+
+
+
+
+
+
+
+
+
+
+
+
