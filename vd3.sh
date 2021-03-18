@@ -48,7 +48,7 @@ elif grep -q "360" <<< $LINKS; then
   echo "resolução 360 selecionada"
 else
   echo "resolução não suportada"
-  exit 1
+  #exit 1
 fi
 
 echo $LINK
