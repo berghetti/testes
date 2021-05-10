@@ -28,10 +28,8 @@ create_node(int value)
 }
 
 static void
-insert_tail(struct node *node)
+insert_head(struct node *node)
 {
-  struct node *tmp;
-
   if (!head)
     {
       head = node;
@@ -39,55 +37,75 @@ insert_tail(struct node *node)
       return;
     }
 
-  tmp = last;
+  head->prev = node;
+  node->next = head;
+  head = node;
+}
+
+static void
+insert_tail(struct node *node)
+{
+  if (!head)
+    {
+      head = node;
+      last = node;
+      return;
+    }
 
   last->next = node;
+  node->prev = last;
   last = node;
-  last->prev = tmp;
 }
 
 // insert after element
 static void
 insert_after(struct node *node, struct node *after)
 {
+  if (!after)
+    {
+      insert_tail(node);
+      return;
+    }
+
   struct node *tmp = after->next;
 
   if (!tmp)
     {
       last = node;  // last element
-
-      after->next = node;
-      node->prev = after;
     }
   else
     {
-      after->next = node;
       node->next = tmp;
-      node->prev = after;
-
       tmp->prev = node;
     }
+
+  after->next = node;
+  node->prev = after;
 }
 
 static void
 insert_before(struct node *node, struct node *before)
 {
+  if (!before)
+    {
+      insert_head(node);
+      return;
+    }
+
   struct node *tmp = before->prev;
 
   if ( !tmp )
     {
       head = node; // first element
-
-      before->prev = node;
-      node->next = before;
     }
   else
     {
       tmp->next = node;
       node->prev = tmp;
-      node->next = before;
-      before->prev = node;
     }
+
+  node->next = before;
+  before->prev = node;
 }
 
 static void
@@ -222,6 +240,11 @@ int main(void)
 
   print_list(head);
 
+  puts("\nInserting 5 head (implict)");
+  // search go return NULL;
+  insert_before(create_node(5), search (8));
+  print_list(head);
+
   printf( "\nsearch tail - %d\n", ( search_tail(10) )->value );
 
 
@@ -231,7 +254,5 @@ int main(void)
       printf("deleting ... %d\n", head->value);
       delete(head);
     }
-
-
 
 }
