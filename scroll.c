@@ -1,23 +1,40 @@
+
 #include <ncurses.h>
 
-int main(void)
+int main(int argc, char **argv)
 {
-    int i = 2, height, width;
-    WINDOW *new;
+  initscr();
+  WINDOW *j = newwin(LINES * 2, COLS, 0, 0);
+  raw();        /* Line buffering disabled  */
+  keypad(j, TRUE);   /* We get F1, F2 etc..    */
+  noecho();     /* Don't echo() while we do getch */
+  scrollok(j, FALSE);
 
-    initscr();
-    getmaxyx(stdscr, height, width);
-    new = newwin(height - 2, width - 2, 1, 1);
+  char str[3];
 
-    scrollok(stdscr,TRUE);
-
-    while(1)
+  int ch;
+  while ('q' != (ch = wgetch(j)))
+  {
+    switch (ch)
     {
-        printw( "%d - lots and lots of lines flowing down the terminal\n", i);
-        ++i;
-        refresh();
+      case KEY_DOWN:
+        scrollok(j, TRUE);
+        wscrl(j, 1);
+        scrollok(j, FALSE);
+        break;
+
+      case KEY_UP:
+        scrollok(j, TRUE);
+        wscrl(j, -1);
+        scrollok(j, FALSE);
+        break;
+
+      default:
+        //printw("The pressed key is ");
+        sprintf(str, "%c\n", ch);
+
+
+        return 0;
     }
 
-    endwin();
-    return 0;
-}
+
