@@ -1,12 +1,12 @@
-
+// gcc -o hash hash.c -DNDEBUG; ./hash
 #include <stdio.h>
 #include <stdlib.h> // rand
 #include <time.h>
 
-#define T_SIZE 16
+// keep power of two
+#define T_SIZE 256
 
 static int *hash_table[T_SIZE];
-
 static int values[T_SIZE];
 
 // https://github.com/shemminger/iproute2/blob/main/misc/ss.c
@@ -43,7 +43,7 @@ test ( unsigned int (*hash) (unsigned int ) )
   for ( i = 0; i < T_SIZE; i++ )
     {
       int *p = malloc( sizeof *p );
-      *p = rand() % 50000;
+      *p = rand() % 4194304;
       values[i] = *p;                 // backup
       index = hash( *p );
 
@@ -69,10 +69,9 @@ test ( unsigned int (*hash) (unsigned int ) )
 #endif
     }
 
-  printf(
-        "   Total values: %d\n"
-        "   Total hits:   %d (%.1f%%)\n",
-        T_SIZE, hit, ( (float) hit /  T_SIZE ) * 100 );
+   printf("   Total values: %d\n"
+          "   Total hits:   %d (%.1f%%)\n",
+          T_SIZE, hit, ( (float) hit /  T_SIZE ) * 100 );
 }
 
 void
@@ -92,13 +91,14 @@ main( void )
 
   unsigned int (*f[])( unsigned int ) = { hash0, hash1, hash2 };
 
-  int i = sizeof f / sizeof (void *);
-  while ( i-- )
+  int i = 0;
+  while ( i < sizeof f / sizeof (void *) )
     {
       printf("Test function hash%d\n", i);
       test( f[i] );
       free_hash_table();
       puts("\n");
+      i++;
     }
 
   return 0;
