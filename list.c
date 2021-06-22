@@ -97,6 +97,7 @@ insert_before(struct node *node, struct node *before)
   if ( !tmp )
     {
       head = node; // first element
+      head->prev = NULL;
     }
   else
     {
@@ -109,35 +110,53 @@ insert_before(struct node *node, struct node *before)
 }
 
 static void
-delete(struct node *node)
+delete_first(struct node *node)
 {
-  // only one element
-  if (!(node->prev) && !(node->next))
-    {
-      last = head = NULL;
-      goto END;
-    }
+  head = node->next;
+  head->prev = NULL;
+}
 
-  // first element
-  if (!node->prev)
-    {
-      head = node->next;
-      head->prev = NULL;
-      goto END;
-    }
-
-  // last element
-  if (!node->next)
-    {
-      last = node->prev;
-      last->next = NULL;
-      goto END;
-    }
-
+static void
+delete_middle(struct node *node)
+{
   node->prev->next = node->next;
   node->next->prev = node->prev;
+}
 
-END:
+static void
+delete_last(struct node *node)
+{
+  last = node->prev;
+  last->next = NULL;
+}
+
+static void
+delete(struct node *node)
+{
+  if (!node)
+    return;
+
+  if ( !node->prev )
+    {
+      // only one element in list
+      if ( !node->next )
+        {
+          last = head = NULL;
+        }
+       // first element
+      else
+        delete_first(node);
+    }
+  // last element
+  else if ( !node->next )
+    {
+      delete_last(node);
+    }
+  else
+    {
+      delete_middle(node);
+    }
+
   free(node);
 }
 
