@@ -4,10 +4,12 @@
 #include <time.h>
 
 // keep power of two
-#define T_SIZE 256
+#define T_SIZE 16
+
+#define TOT_VALUES 2
 
 static int *hash_table[T_SIZE];
-static int values[T_SIZE];
+static int values[TOT_VALUES];
 
 // https://github.com/shemminger/iproute2/blob/main/misc/ss.c
 unsigned int
@@ -22,7 +24,7 @@ hash0( unsigned int key )
 unsigned int
 hash1( unsigned int key )
 {
-  return ( key * 2654435761 ) & (T_SIZE - 1);
+  return key & (T_SIZE - 1);
 }
 
 unsigned int
@@ -30,8 +32,20 @@ hash2( unsigned int key )
 {
   key = ( ( key >> 16) ^ key ) * 0x45d9f3b;
   key = ( ( key >> 16) ^ key ) * 0x45d9f3b;
-  key = ( key>> 16 ) ^ key;
+  key = ( key >> 16 ) ^ key;
   return key & (T_SIZE - 1);
+}
+
+unsigned int
+hash3( unsigned int key )
+{
+  return ( (key * 5) + 1) & (T_SIZE - 1);
+}
+
+unsigned int
+hash4( unsigned int key )
+{
+  return (  ( (5381 << 5 ) + 5381) + key ) & (T_SIZE - 1);
 }
 
 void
@@ -40,38 +54,37 @@ test ( unsigned int (*hash) (unsigned int ) )
   int i, hit = 0;
   unsigned int index;
 
-  for ( i = 0; i < T_SIZE; i++ )
+  for ( i = 0; i < TOT_VALUES; i++ )
     {
       int *p = malloc( sizeof *p );
-      *p = rand() % 4194304;
-      values[i] = *p;                 // backup
+      *p = values[i];
       index = hash( *p );
+
+      char *st = "";
 
       // not overwrite
       if ( ! hash_table[index] )
-        hash_table[ index ] = p;
-    }
-
-  for ( i = 0; i < T_SIZE; i++ )
-    {
-      index = hash( values[i] );
-      char *st = "(colision)";
-
-      if ( values[i] == *hash_table[index] )
         {
+          hash_table[ index ] = p;
           hit++;
-          st = "";
+        }
+      else
+        {
+          free(p);
+          st = "(collision)";
         }
 
 #ifndef NDEBUG
       printf( "%d - %d (index %u) %s\n",
               values[i], *hash_table[ index ], index, st );
 #endif
+
     }
 
    printf("   Total values: %d\n"
+          "   Table size:   %d\n"
           "   Total hits:   %d (%.1f%%)\n",
-          T_SIZE, hit, ( (float) hit /  T_SIZE ) * 100 );
+          TOT_VALUES, T_SIZE, hit, ( (float) hit /  TOT_VALUES ) * 100 );
 }
 
 void
@@ -84,12 +97,24 @@ free_hash_table( void )
     }
 }
 
+void
+rand_values( void )
+{
+  for ( int i = 0; i < TOT_VALUES; i++ )
+      values[i] = rand() % 50000;
+}
+
 int
 main( void )
 {
   srand(time(NULL));
 
-  unsigned int (*f[])( unsigned int ) = { hash0, hash1, hash2 };
+  unsigned int (*f[])( unsigned int ) =
+    {
+     hash0, hash1, hash2, hash3, hash4
+    };
+
+  rand_values();
 
   int i = 0;
   while ( i < sizeof f / sizeof (void *) )
