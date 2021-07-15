@@ -2,8 +2,6 @@
 #ifndef HASHTABLE
 #define HASHTABLE
 
-#include <stdint.h>
-
 typedef size_t hash_t;
 
 typedef struct slist_item
@@ -16,33 +14,50 @@ typedef struct slist
   slist_item_t *head;
 } slist_t;
 
+
+typedef void (*fclear)(void *);
+
 typedef struct hashtable
 {
   size_t nentries;  // Total number of entries in the table
   size_t nbuckets;
   slist_t *buckets;
+
+  fclear clear;     // callback clear data from user
 } hashtable_t;
 
 typedef struct hashtable_entry
 {
   // used by hashtable_t.buckets to link entries
-  slist_item_t slist_item;
+  slist_item_t _slist_item;  // "class parent"
 
   hash_t key_hash;
-  uint64_t key;
+  size_t key;
   void *value;
 } hashtable_entry_t;
 
+typedef int (*hashtable_foreach_func) ( void *value,
+                                        void *user_data);
+
+
 hashtable_t *
-hashtable_new ( void );
+hashtable_new ( fclear clear );
 
 void *
-hashtable_set ( hashtable_t *ht, const uint64_t key, void *value );
+hashtable_set ( hashtable_t *ht, const size_t key, void *value );
 
 void *
-hashtable_get ( hashtable_t *ht, const uint64_t key );
+hashtable_get ( hashtable_t *ht, const size_t key );
+
+int
+hashtable_foreach( hashtable_t *ht,
+                   hashtable_foreach_func func,
+                   void *user_data );
+
+void *
+hashtable_remove ( hashtable_t *ht, const size_t key);
 
 void
-hashtable_free( hashtable_t *ht, void (*clear)(void *) );
+hashtable_destroy ( hashtable_t *ht );
 
 #endif // HASHTABLE
