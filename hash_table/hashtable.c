@@ -23,14 +23,14 @@
 #define PP_ENTRY_NEXT(entry) \
   ( (hashtable_entry_t **) &((slist_item_t *) (entry))->next )
 
-/* makes sure the real size of the buckets array is a power of 2 */
+// makes sure the real size of the buckets array is a power of 2
 static size_t
 round_size( size_t s )
 {
   if (s < HASHTABLE_MIN_SIZE)
     return HASHTABLE_MIN_SIZE;
 
-  size_t i = 1;
+  size_t i = HASHTABLE_MIN_SIZE;
   while ( i < s )
     i <<= 1;
 
@@ -54,7 +54,9 @@ hashtable_preprend( slist_t *list, slist_item_t *item )
 static int
 hashtable_rehash( hashtable_t *ht)
 {
-  size_t num_buckets = round_size((size_t)(ht->nentries * HASHTABLE_REHASH_FACTOR));
+  size_t num_buckets =
+              round_size((size_t)(ht->nentries * HASHTABLE_REHASH_FACTOR));
+
   if (num_buckets == ht->nbuckets)
     return 1;
 
@@ -165,24 +167,25 @@ hashtable_get( hashtable_t *ht, const size_t key )
 }
 
 int
-hashtable_foreach( hashtable_t *ht,
+hashtable_foreach( hashtable_t * restrict ht,
                    hashtable_foreach_func func,
                    void *user_data )
 {
-  size_t j = 0;
-  for ( size_t i = 0;
-       i < ht->nbuckets && j < ht->nentries;
-       i++ )
+  for ( size_t i = 0; i < ht->nbuckets; i++ )
     {
-      hashtable_entry_t *entry = TABLE_HEAD( ht, i );
-      while( entry )
+      hashtable_entry_t **entry = PP_TABLE_HEAD( ht, i );
+      while( *entry )
         {
-          int ret = func( entry->value, user_data );
+          int ret = func( ht, (*entry)->value, user_data );
           if ( ret )
             return ret;
 
-          j++;
-          entry = ENTRY_NEXT( entry );
+          // callback can delete current element, and if element is last
+          // from linked list, *entry will be NULL
+          if ( *entry == NULL )
+            break;
+
+          entry = PP_ENTRY_NEXT( *entry );
         }
     }
 
@@ -200,16 +203,16 @@ hashtable_remove ( hashtable_t *ht, const size_t key )
   while( *entry && (*entry)->key != key )
     entry = PP_ENTRY_NEXT( *entry );
 
-  if ( !( *entry ) )
+  if ( *entry == NULL )
     return NULL;
 
   hashtable_entry_t *del = *entry;
-
   void *value = del->value;
+
   *entry = ENTRY_NEXT( del );
   free( del );
-  ht->nentries--;
 
+  ht->nentries--;
   if ( (float)ht->nentries / (float)ht->nbuckets < HASHTABLE_LOW )
     hashtable_rehash( ht );
 

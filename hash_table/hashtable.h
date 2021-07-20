@@ -14,7 +14,6 @@ typedef struct slist
   slist_item_t *head;
 } slist_t;
 
-
 typedef void (*fclear)(void *);
 
 typedef struct hashtable
@@ -36,9 +35,9 @@ typedef struct hashtable_entry
   void *value;
 } hashtable_entry_t;
 
-typedef int (*hashtable_foreach_func) ( void *value,
+typedef int (*hashtable_foreach_func) ( hashtable_t * restrict ht,
+                                        void *value,
                                         void *user_data);
-
 
 hashtable_t *
 hashtable_new ( fclear clear );
@@ -50,9 +49,9 @@ void *
 hashtable_get ( hashtable_t *ht, const size_t key );
 
 int
-hashtable_foreach( hashtable_t *ht,
-                   hashtable_foreach_func func,
-                   void *user_data );
+hashtable_foreach ( hashtable_t *ht,
+                    hashtable_foreach_func func,
+                    void *user_data );
 
 void *
 hashtable_remove ( hashtable_t *ht, const size_t key);

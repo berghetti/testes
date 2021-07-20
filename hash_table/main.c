@@ -7,7 +7,7 @@
 
 #include "hashtable.h"
 
-#define TOT_DATA 20
+#define TOT_DATA 2
 
 typedef struct mydata
 {
@@ -17,12 +17,12 @@ typedef struct mydata
 
 struct my_array
 {
-  Mydata *data;
+  Mydata **data;
   size_t pos;
 };
 
 int
-print( void *value, void *user_data )
+print( hashtable_t *ht, void *value, void *user_data )
 {
   Mydata *data = (Mydata *)value;
   int *count = (int *)user_data;
@@ -38,49 +38,54 @@ void print_ht ( hashtable_t *ht )
   hashtable_foreach( ht, print, &count );
 }
 
-int to_array( void *value, void *user_data )
+int to_array( hashtable_t *ht, void *value, void *user_data )
 {
   struct my_array *ar = user_data;
-  ar->data[ar->pos] = *(Mydata *)value;
+  ar->data[ar->pos] = value;
   ar->pos++;
 
   return 0;
 }
 
-Mydata *
+Mydata **
 copy_ht_to_array ( hashtable_t *ht )
 {
-  size_t size = ht->nentries + 1;
-  Mydata *p = malloc( size * sizeof( *p ) );
+  Mydata **pp = malloc( ( ht->nentries + 1 ) * sizeof( *pp ) );
 
-  if (p)
+  if ( pp )
     {
-      struct my_array my_array = { .data = p, .pos = 0 };
+      struct my_array my_array = { .data = pp, .pos = 0 };
 
       hashtable_foreach( ht, to_array, &my_array );
 
-      memset(p + ht->nentries, 0, sizeof( *p ) );
+      pp[ht->nentries] = NULL;  // last pointer
     }
 
-  return p;
+  return pp;
+}
+
+int remove_inative( hashtable_t * ht, void *value, void *user_data )
+{
+  Mydata *data = value;
+
+  fprintf(stderr, "value %d\n", data->value);
+  if ( 0 == data->value )
+    free ( hashtable_remove( ht, data->key ) );
+
+  return 0;
 }
 
 int
 main( void )
 {
-
-  Mydata *data;
   hashtable_t *ht = hashtable_new( free );
-
-
-
-
 
   int keys[TOT_DATA];
   srand(time(NULL));
   for (size_t i = 0; i < TOT_DATA; i++)
     keys[i] = rand() % 50000;
 
+  Mydata *data;
   for (size_t i = 0; i < TOT_DATA; i++)
     {
       data = malloc( sizeof *data );
@@ -100,31 +105,40 @@ main( void )
   //       }
   //   }
 
-  for (size_t i = 0; i < TOT_DATA / 1.2; i++)
-    {
-      data = hashtable_remove( ht, keys[i] );
-      if ( data )
-       {
-         // DEBUG("REMOVED\n");
-         free(data);
-       }
-    }
-  print_ht( ht );
-  //
-  // data = copy_ht_to_array( ht );
-  // Mydata *p = data;
-  // data = *pp;
-  hashtable_destroy( ht );
-
-  // while(p->key)
+  // for (size_t i = 0; i < TOT_DATA / 1.2; i++)
   //   {
-  //     printf("data->key %d\ndata->value %d\n\n",
-  //     p->key, p->value);
+  //     data = hashtable_remove( ht, keys[i] );
+  //     if ( data )
+  //      {
+  //        // DEBUG("REMOVED\n");
+  //        free(data);
+  //      }
+  //   }
+
+  // Mydata **pp_data = copy_ht_to_array( ht );
   //
-  //     p++;
+  // Mydata **pp = pp_data;
+  // while( *pp )
+  //   {
+  //     Mydata *p = *pp;
+  //     // printf("data->key %d\ndata->value %d\n\n",
+  //     // p->key, p->value);
+  //
+  //     // p->value += 100;
+  //
+  //     pp++;
   //   }
   //
-  // free(data);
+  // free( pp_data );
+
+  print_ht( ht );
+
+  hashtable_foreach( ht, remove_inative, NULL );
+
+  print_ht( ht );
+
+  hashtable_destroy( ht );
+
 
   return 0;
 }

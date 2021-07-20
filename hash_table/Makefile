@@ -5,7 +5,7 @@ PROG=hash
 OBJS= main.o \
 			hashtable.o
 
-CFLAGS= -Wall -Wextra -pedantic -ggdb -std=c99
+CFLAGS= -Wall -Wextra -pedantic -ggdb -std=c99 -O0
 # CPPFLAGS= -DNDEBUG
 CC=cc
 
