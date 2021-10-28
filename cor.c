@@ -1,4 +1,5 @@
-#include <curses.has#include <term.h>
+#include <curses.h>
+#include <term.h>
 #include <stdio.h>
 #include <unistd.h>
 

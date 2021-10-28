@@ -4,9 +4,9 @@
 #include <time.h>
 
 // keep power of two
-#define T_SIZE 16
+#define T_SIZE 2048
 
-#define TOT_VALUES 2
+#define TOT_VALUES 1501
 
 static int *hash_table[T_SIZE];
 static int values[TOT_VALUES];
@@ -48,6 +48,26 @@ hash4( unsigned int key )
   return (  ( (5381 << 5 ) + 5381) + key ) & (T_SIZE - 1);
 }
 
+unsigned int
+hash5( unsigned int key )
+{
+  char *s = (char *) &key;
+
+  unsigned long int h = 0;
+  unsigned long int high;
+  while ( *s )
+    {
+      h = (h << 4) + *s++;
+
+      if ( ( high = ( h & 0xF0000000 ) ) )
+        h ^= high >> 24;
+
+      h &= ~high;
+    }
+
+  return h & (T_SIZE - 1);
+}
+
 void
 test ( unsigned int (*hash) (unsigned int ) )
 {
@@ -60,7 +80,9 @@ test ( unsigned int (*hash) (unsigned int ) )
       *p = values[i];
       index = hash( *p );
 
+#ifndef NDEBUG
       char *st = "";
+#endif
 
       // not overwrite
       if ( ! hash_table[index] )
@@ -71,7 +93,9 @@ test ( unsigned int (*hash) (unsigned int ) )
       else
         {
           free(p);
+#ifndef NDEBUG
           st = "(collision)";
+#endif
         }
 
 #ifndef NDEBUG
@@ -111,15 +135,15 @@ main( void )
 
   unsigned int (*f[])( unsigned int ) =
     {
-     hash0, hash1, hash2, hash3, hash4
+     hash0, hash1, hash2, hash3, hash4, hash5
     };
 
   rand_values();
 
-  int i = 0;
+  unsigned long int i = 0;
   while ( i < sizeof f / sizeof (void *) )
     {
-      printf("Test function hash%d\n", i);
+      printf("Test function hash%ld\n", i);
       test( f[i] );
       free_hash_table();
       puts("\n");

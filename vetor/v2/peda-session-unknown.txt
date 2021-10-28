@@ -1,0 +1,3 @@
+break /home/mayco/programas/testes/vetor/v2/vector.c:46
+
+set exec-wrapper The wrapper for running programs is \

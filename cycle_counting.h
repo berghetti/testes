@@ -5,6 +5,8 @@
 #error Works only on GCC
 #endif
 
+#pragma GCC diagnostic ignored "-Wignored-qualifiers"
+
 // https://bitismyth.wordpress.com/2019/09/24/contador-do-homem-pobre-agora-com-suporta-ao-arm/
 
 /* ==========================================
@@ -30,9 +32,8 @@
 // não volátil.
 typedef volatile uint64_t counter_T;
 
-
 #if defined( __x86_64__ )
-inline counter_T
+static inline counter_T
 BEGIN_TSC ( void )
 {
   uint32_t a, d;
@@ -44,23 +45,25 @@ BEGIN_TSC ( void )
           // "xorl %%eax,%%eax\n\t"
           "cpuid\n\t"
           "rdtsc"
-          : "=a" (a), "=d" (d) : "a" (0) : "rbx" );
+          : "=a"( a ), "=d"( d )
+          : "a"( 0 )
+          : "rbx" );
 
   return a | ( ( uint64_t ) d << 32 );
 }
 
-inline counter_T
+static inline counter_T
 END_TSC ( const counter_T cptr )
 {
   uint32_t a, d;
 
-  __asm__ __volatile__( "rdtsc" : "=a" (a), "=d" (d) );
+  __asm__ __volatile__( "rdtsc" : "=a"( a ), "=d"( d ) );
 
   return ( a | ( ( uint64_t ) d << 32 ) ) - cptr;
 }
 
 #elif defined( __i386__ )
-inline counter_T
+static inline counter_T
 BEGIN_TSC ( void )
 {
   uint32_t a, d;
@@ -80,7 +83,7 @@ BEGIN_TSC ( void )
   return a | ( ( uint64_t ) d << 32 );
 }
 
-inline void
+static inline void
 END_TSC ( counter_T *cptr )
 {
   uint32_t a, d;
@@ -93,7 +96,7 @@ END_TSC ( counter_T *cptr )
 #if __ARM_32BIT_STATE == 1
 // This works only on ARMv8
 #if __ARM_ARCH__ > 7
-inline counter_T
+static inline counter_T
 BEGIN_TSC ( void )
 {
   unsigned int r0, r1;
@@ -109,7 +112,7 @@ BEGIN_TSC ( void )
   return ( ( uint64_t ) r1 << 32 ) | r0;
 }
 
-inline void
+static inline void
 END_TSC ( counter_T *cptr )
 {
   unsigned int r0, r1;
@@ -125,7 +128,7 @@ END_TSC ( counter_T *cptr )
 #error ARMv8 or superior only.
 #endif
 #else  // otherwise we are in aarch64 mode.
-inline counter_T
+static inline counter_T
 BEGIN_TSC ( void )
 {
   uint64_t count;
@@ -140,7 +143,7 @@ BEGIN_TSC ( void )
   return count;
 }
 
-inline void
+static inline void
 END_TSC ( counter_T *cptr )
 {
   uint64_t count;

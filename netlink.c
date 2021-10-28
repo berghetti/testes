@@ -63,7 +63,8 @@ send_query(int fd)
 
    //Filter out some states, to show how it is done
    conn_req.idiag_states = -1;
-   // TCPF_ALL & ~((1<<TCP_SYN_RECV) | (1<<TCP_TIME_WAIT) | (1<<TCP_CLOSE));
+   // conn_req.idiag_states = (1 << TCP_LISTEN) | (1 << TCP_CLOSING);
+    // TCPF_ALL & ~((1<<TCP_SYN_RECV) | (1<<TCP_TIME_WAIT) | (1<<TCP_CLOSE));
 
    //Request extended TCP information (it is the tcp_info struct)
    //ext is a bitmask containing the extensions I want to acquire. The values
@@ -81,8 +82,8 @@ send_query(int fd)
    //conn_req.id.idiag_dport=htons(443);
 
    //Avoid using compat by specifying family + protocol in header
-   nlh.nlmsg_type = SOCK_DIAG_BY_FAMILY;
-   // nlh.nlmsg_type = TCPDIAG_GETSOCK;
+   // nlh.nlmsg_type = SOCK_DIAG_BY_FAMILY;
+   nlh.nlmsg_type = TCPDIAG_GETSOCK;
    iov[0].iov_base = (void*) &nlh;
    iov[0].iov_len = sizeof(nlh);
    iov[1].iov_base = (void*) &conn_req;
@@ -101,91 +102,6 @@ send_query(int fd)
 
    puts("aqui1");
    return retval;
-
-
-  // struct sockaddr_nl nladdr = { .nl_family = AF_NETLINK };
-	// struct {
-	// 	struct nlmsghdr nlh;
-	// 	struct inet_diag_req r;
-	// } req = {
-	// 	.nlh.nlmsg_len = sizeof(req),
-	// 	.nlh.nlmsg_flags = NLM_F_ROOT | NLM_F_MATCH | NLM_F_REQUEST,
-	// 	// .nlh.nlmsg_seq = MAGIC_SEQ,
-	// 	.r.idiag_family = AF_INET,
-	// 	.r.idiag_states = 0xFFF
-	// };
-  // struct iovec iov;
-  // iov.iov_base = &(req.nlh);
-  // iov.iov_len = sizeof(req);
-  //
-  // struct msghdr msg;
-  // msg = (struct msghdr) {
-  // .msg_name = (void *)&nladdr,
-  // .msg_namelen = sizeof(nladdr),
-  // .msg_iov = &iov,
-  // .msg_iovlen = 1,
-  // };
-  //
-  // if (sendmsg(fd, &msg, 0) < 0) {
-  //       perror("sendmsg");
-  //       // return -1;
-  //   }
-  //
-  // puts("aqui");
-  // return 0;
-
-
-  // struct sockaddr_nl nladdr = { .nl_family = AF_NETLINK };
-  // struct
-  // {
-  //   struct nlmsghdr nlh;
-  //   // struct unix_diag_req udr;
-  //   struct inet_diag_req_v2 conn_req;
-  // } req = {
-  //   .nlh = {
-  //     .nlmsg_len = NLMSG_LENGTH(sizeof(struct inet_diag_req_v2)),
-  //     .nlmsg_type = SOCK_DIAG_BY_FAMILY,
-  //     .nlmsg_flags = NLM_F_REQUEST | NLM_F_DUMP
-  //   },
-  //   .conn_req = {
-  //     .sdiag_family = AF_INET,
-  //     .sdiag_protocol = IPPROTO_TCP,
-  //     // .udiag_states = -1,
-  //     // .idiag_states = 0xFF
-  //     .idiag_states =  TCPF_ALL & ~((1<<TCP_SYN_RECV) | (1<<TCP_TIME_WAIT) | (1<<TCP_CLOSE))
-  //     // .udiag_show = UDIAG_SHOW_NAME | UDIAG_SHOW_PEER
-  //   }
-  // };
-  //
-  // struct iovec iov[3];
-  // iov[0].iov_base = &(req.nlh);
-  // iov[0].iov_len = sizeof(struct sockaddr_nl);
-  // iov[1].iov_base = &(req.conn_req);;
-  // iov[1].iov_len = sizeof(struct inet_diag_req_v2);
-  //
-  // // struct iovec iov = {
-  // //   .iov_base = &req,
-  // //   .iov_len = sizeof(req)
-  // // };
-  // struct msghdr msg = {
-  //   .msg_name = &nladdr,
-  //   .msg_namelen = sizeof(nladdr),
-  //   .msg_iov = iov,
-  //   .msg_iovlen = 2
-  // };
-  //
-  // for (;;) {
-  //   if (sendmsg(fd, &msg, 0) < 0) {
-  //     if (errno == EINTR)
-  //     continue;
-  //
-  //     perror("sendmsg");
-  //     return -1;
-  //   }
-  //
-  //   puts("aqui");
-  //   return 0;
-  // }
 }
 
 static int
@@ -210,50 +126,6 @@ print_diag(const struct inet_diag_msg *diag, unsigned int len)
    diag->idiag_family, diag->idiag_state, diag->idiag_inode,
    src_addr_buf, ntohs(diag->id.idiag_sport), dst_addr_buf, ntohs(diag->id.idiag_dport));
 
-
-
-  // printf("%d\n", diag->udiag_family);
-  // puts("aqui3");
-  // if (diag->udiag_family != AF_UNIX) {
-  //   fprintf(stderr, "unexpected family %u\n", diag->udiag_family);
-  //   return -1;
-  // }
-
-  // unsigned int rta_len = len - NLMSG_LENGTH(sizeof(*diag));
-  // // unsigned int peer = 0;
-  // size_t path_len = 0;
-  // char path[sizeof(((struct sockaddr_un *) 0)->sun_path) + 1];
-  //
-  // for (struct rtattr *attr = (struct rtattr *) (diag + 1);
-  // RTA_OK(attr, rta_len); attr = RTA_NEXT(attr, rta_len)) {
-  //   switch (attr->rta_type) {
-  //     case UNIX_DIAG_NAME:
-  //     if (!path_len) {
-  //       path_len = RTA_PAYLOAD(attr);
-  //       if (path_len > sizeof(path) - 1)
-  //       path_len = sizeof(path) - 1;
-  //       memcpy(path, RTA_DATA(attr), path_len);
-  //       path[path_len] = '\0';
-  //     }
-  //     break;
-  //
-  //     case UNIX_DIAG_PEER:
-  //     if (RTA_PAYLOAD(attr) >= sizeof(peer))
-  //     peer = *(unsigned int *) RTA_DATA(attr);
-  //     break;
-  //   }
-  // }
-  //
-  // printf("inode=%u", diag->udiag_ino);
-  //
-  // if (peer)
-  // printf(", peer=%u", peer);
-  //
-  // if (path_len)
-  // printf(", name=%s%s", *path ? "" : "@",
-  // *path ? path : path + 1);
-  //
-  // putchar('\n');
   return 0;
 }
 
@@ -269,24 +141,6 @@ receive_responses(int fd)
     .iov_len = sizeof(buf)
   };
   int flags = 0;
-
-  // struct sockaddr_nl nladdr;
-  // struct msghdr msg;
-  // struct iovec iov;
-  // struct nlmsghdr *nlh = NULL;
-  //
-  // iov.iov_base = (void *)nlh;
-  // iov.iov_len = 8192;
-  // msg.msg_name = (void *)&(nladdr);
-  // msg.msg_namelen = sizeof(nladdr);
-  //
-  // msg.msg_iov = &iov;
-  // msg.msg_iovlen = 1;
-  // recvmsg(fd, &msg, 0);
-  // puts("aqui2");
-  //
-  // return 0;
-
 
   for (;;) {
 
@@ -334,11 +188,11 @@ receive_responses(int fd)
         return -1;
       }
 
-      if (h->nlmsg_type != SOCK_DIAG_BY_FAMILY) {
-        fprintf(stderr, "unexpected nlmsg_type %u\n",
-        (unsigned) h->nlmsg_type);
-        return -1;
-      }
+      // if (h->nlmsg_type != SOCK_DIAG_BY_FAMILY) {
+      //   fprintf(stderr, "unexpected nlmsg_type %u\n",
+      //   (unsigned) h->nlmsg_type);
+      //   return -1;
+      // }
 
 
       if (print_diag(NLMSG_DATA(h), h->nlmsg_len))
