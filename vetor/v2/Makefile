@@ -1,5 +1,5 @@
 
-CFLAGS = -Wall -Wextra -pedantic -ggdb -O0
+CFLAGS = -Wall -Wextra -pedantic -ggdb -O2
 
 OBJS = vector.o \
 			 main.o

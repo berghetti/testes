@@ -10,6 +10,8 @@ struct vector
   size_t element_size;
 };
 
+/* CHUNK is header, MEM is user memory */
+
 #define CHUNCK_TO_MEM( pos ) ( ( char *) (pos)  + sizeof( struct vector ) )
 #define MEM_TO_CHUNK( pos ) \
   ( ( struct vector *) ( (char *) (pos) - sizeof( struct vector ) ) )
@@ -28,22 +30,32 @@ vector_copy( struct vector *restrict v, void *restrict data )
   memcpy( ptr, data, v->element_size );
 }
 
+#define DFL_START_LEN 16
+
 void *
 vector_new( size_t nmemb, size_t size )
 {
+  if (nmemb == 0)
+    nmemb = DFL_START_LEN;
+
   struct vector *vt = vector_alloc( NULL,  nmemb * size );
 
-  vt->elements_allocated = nmemb;
-  vt->elements_used = 0;
-  vt->element_size = size;
+  if ( vt )
+    {
+      vt->elements_allocated = nmemb;
+      vt->elements_used = 0;
+      vt->element_size = size;
 
-  return CHUNCK_TO_MEM( vt );
+      return CHUNCK_TO_MEM( vt );
+    }
+
+  return vt;
 }
 
 int
-vector_push( void ** restrict v, void *restrict data )
+_vector_push( void ** restrict mem, void *restrict data )
 {
-  struct vector *vt = MEM_TO_CHUNK( *v );
+  struct vector *vt = MEM_TO_CHUNK( *mem );
 
   if ( vt->elements_used == vt->elements_allocated )
     {
@@ -52,12 +64,15 @@ vector_push( void ** restrict v, void *restrict data )
       void *temp = vector_alloc( vt, new_size );
 
       if ( !temp )
-        return 0;
+        {
+          vt->elements_allocated >>= 1;
+          return 0;
+        }
 
       if ( vt != temp )
         {
           vt = temp;
-          *v = CHUNCK_TO_MEM( vt );
+          *mem = CHUNCK_TO_MEM( vt );
         }
     }
 
@@ -68,10 +83,34 @@ vector_push( void ** restrict v, void *restrict data )
   return 1;
 }
 
-void
-vector_free( void *v )
+int
+vector_pop ( void *mem )
 {
-  struct vector *vt = MEM_TO_CHUNK( v );
+  struct vector *vt = MEM_TO_CHUNK( mem );
+
+  return ( vt->elements_used-- );
+}
+
+void
+vector_clear( void *mem )
+{
+  struct vector *vt = MEM_TO_CHUNK( mem );
+
+  vt->elements_used = 0;
+}
+
+size_t
+vector_size( void *mem )
+{
+  struct vector *vt = MEM_TO_CHUNK( mem );
+
+  return vt->elements_used;
+}
+
+void
+vector_free( void *mem )
+{
+  struct vector *vt = MEM_TO_CHUNK( mem );
 
   free( vt );
 }
