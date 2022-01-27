@@ -1,3 +1,9 @@
 cvlc -vvv video.mp4 --sout '#standard{access=http,mux=ffmpeg{mux=flv},dst=192.168.2.106:8080}'
 
 cvlc -vvv video.mp4 --sout '#standard{access=http,mux=ffmpeg{mux=flv},dst=:8080}' --http-host=192.168.2.106
+
+#rtp multcast
+cvlc -vvv /home/mayco/Vídeos/zabbix.mp4 --sout '#transcode{vcodec=h264,acodec=mpga,ab=128,channels=2,samplerate=44100,scodec=none}:rtp{dst=224.0.0.61,port=5004,mux=ts}' :no-sout-all :sout-keep
+
+#client rtp
+cvlc rtp://224.0.0.61:5004
