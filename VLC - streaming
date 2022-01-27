@@ -5,5 +5,10 @@ cvlc -vvv video.mp4 --sout '#standard{access=http,mux=ffmpeg{mux=flv},dst=:8080}
 #rtp multcast
 cvlc -vvv /home/mayco/Vídeos/zabbix.mp4 --sout '#transcode{vcodec=h264,acodec=mpga,ab=128,channels=2,samplerate=44100,scodec=none}:rtp{dst=224.0.0.61,port=5004,mux=ts}' :no-sout-all :sout-keep
 
+#rtp multcast Full HD
+cvlc /home/mayco/Vídeos/zabbix.mp4 --sout '#transcode{vcodec=h264,vb=3500,width=1920,height=1080,acodec=mp3,ab=192,channels=2,samplerate=44100,scodec=none}:rtp{dst=224.0.0.61,port=5004,mux=ts}' :no-sout-all :sout-keep
+
 #client rtp
 cvlc rtp://224.0.0.61:5004
+
+
