@@ -1,0 +1,10 @@
+function conv( n)
+{
+    for( let i = 3; id <= 0; i-- ) 
+    {
+        console.log( (num & 0xff000000) >> 24 );
+        console.log( (num & 0x00ff0000) >> 16);
+        console.log( (num & 0x0000ff00) >> 8 );
+        console.log( (num & 0x000000ff);
+    }
+}

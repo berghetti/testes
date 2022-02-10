@@ -53,7 +53,7 @@ vector_new( size_t nmemb, size_t size )
 }
 
 int
-_vector_push( void ** restrict mem, void *restrict data )
+vector_push_( void ** restrict mem, void *restrict data )
 {
   struct vector *vt = MEM_TO_CHUNK( *mem );
 

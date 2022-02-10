@@ -1,23 +1,54 @@
+
 #include <stdio.h>
-#include <unistd.h>
+#include <time.h>
+#include <stdint.h>
 
-#define SEC 45667
-
-int main (void)
+uint64_t
+get_time ( void )
 {
+  clockid_t ci;
 
-  int sec = 0,
-      min = 0,
-      hora = 0;
+#ifdef CLOCK_MONOTONIC_COARSE
+  ci = CLOCK_MONOTONIC_COARSE;
+#else
+  ci = CLOCK_MONOTONIC;
+#endif
 
+  struct timespec ts;
+  if ( -1 == clock_gettime ( ci, &ts ) )
+    return 0;
 
-  hora = SEC / 3600;
-  min = (SEC % 3600) / 60;
-  sec = (SEC % 3600) % 60;
+  return ts.tv_sec * 1000U + ts.tv_nsec / 1E6;
+}
 
+#define ONE_SEC 1000
 
-  printf("%d : %d : %d\n", hora, min, sec);
+int
+main( void )
+{
+  
+  uint64_t cur_time = get_time();
 
+  while(1)
+    {
+      uint64_t new_time = get_time();
 
+      if (new_time < cur_time)
+         continue;
 
+      uint32_t diff_time = new_time - cur_time;
+
+      if ( diff_time >= ONE_SEC )
+        {
+          diff_time -= ONE_SEC;
+
+          cur_time = new_time + diff_time;
+
+          static int tick_tack = 0;
+          printf( "%s\n", (tick_tack) ? "tack" : "tick" );
+          tick_tack = !tick_tack;
+        }
+    }
+  
+  return 0;
 }

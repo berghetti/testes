@@ -1,6 +1,16 @@
 
-int main()
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+#define DUP( code ) code, code 
+
+int
+main ( int argc, char **argv )
 {
 
-  printf("%d\n", "ABCDEF"[1]);
+  int dummy;
+
+  DUP(dummy);
+
 }

@@ -14,8 +14,6 @@
 void *
 vector_new ( size_t nmeb, size_t size );
 
-int
-_vector_push ( void **mem, void *data );
 /*
  copy user data into vector
  @oaram mem, pointer returned from vector_new
@@ -23,11 +21,14 @@ _vector_push ( void **mem, void *data );
 
  @return 1 if success or 0 in error
 */
+int
+vector_push_ ( void **mem, void *data );
+
 #define vector_push( mem, data ) \
-  _vector_push( ( void **) (&mem), (data) )
+  vector_push_( ( void **) (&mem), (data) )
 
 /*
-  remove one element from vector
+  remove last element from vector
   @oaram mem, pointer returned from vector_new
 
   @return number of elements in vector

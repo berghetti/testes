@@ -35,6 +35,7 @@ round_size( size_t s )
     i <<= 1;
 
   return i;
+  // return s;
 }
 
 // https://github.com/shemminger/iproute2/blob/main/misc/ss.c
@@ -85,11 +86,20 @@ hashtable_rehash( hashtable_t *ht)
   return 1;
 }
 
+static inline size_t
+reciprocal_scale( hash_t hash, size_t ht_size )
+{
+  return (hash * ht_size) >> 32;
+  // return ( ( hash * 11400714819323198485llu ) >> ( 64 - __builtin_popcount( ht_size - 1) ) );
+  // return hash & ht_size -1;
+}
+
 static hashtable_entry_t *
 hashtable_get_entry( hashtable_t *ht, const size_t key )
 {
   hash_t hash = hash_func( key );
-  size_t index = hash & ( ht->nbuckets - 1);
+  // size_t index = hash & ( ht->nbuckets - 1);
+  size_t index = reciprocal_scale( hash,  ht->nbuckets);
 
   hashtable_entry_t *entry = TABLE_HEAD( ht, index );
   while ( entry )
@@ -127,6 +137,8 @@ hashtable_new( fclear clear )
     return ht;
 }
 
+
+
 void *
 hashtable_set ( hashtable_t * restrict ht, const size_t key, void *value )
 {
@@ -149,7 +161,9 @@ hashtable_set ( hashtable_t * restrict ht, const size_t key, void *value )
         }
     }
 
-  size_t index = entry->key_hash & ( ht->nbuckets - 1 );
+  // size_t index = entry->key_hash & ( ht->nbuckets - 1 );
+  size_t index = reciprocal_scale( entry->key_hash,  ht->nbuckets);
+
   hashtable_preprend( &ht->buckets[index], (slist_item_t *) entry );
 
   DEBUG("seting new key %ld\n", entry->key);
@@ -197,9 +211,11 @@ void *
 hashtable_remove ( hashtable_t *ht, const size_t key )
 {
   hash_t hash = hash_func( key );
-  size_t index = hash & ( ht->nbuckets - 1);
+  // size_t index = hash & ( ht->nbuckets - 1);
+  size_t index = reciprocal_scale( hash,  ht->nbuckets);
 
   hashtable_entry_t **entry = PP_TABLE_HEAD( ht, index );
+
   while( *entry && (*entry)->key != key )
     entry = PP_ENTRY_NEXT( *entry );
 
@@ -228,26 +244,24 @@ hashtable_destroy_entry( hashtable_t *ht, hashtable_entry_t *entry )
   free( entry );
 }
 
-void
-hashtable_destroy( hashtable_t *ht )
-{
-  for ( size_t i = 0; i < ht->nbuckets; i++ )
+void hashtable_destroy(hashtable_t *ht) {
+
+  for (size_t i = 0; i < ht->nbuckets; i++)
     {
-      if ( !ht->nentries )
+      if (!ht->nentries)
         break;
 
       DEBUG("%ld - |", i);
 
-      hashtable_entry_t *entry = TABLE_HEAD( ht, i );
-      int j = 0;  // debug
-      while( entry )
-        {
-          DEBUG( " %d key %ld |", ++j, entry->key );
-          hashtable_entry_t *entry_next = ENTRY_NEXT( entry );
-          hashtable_destroy_entry( ht, entry );
-          ht->nentries--;
-          entry = entry_next;
-        }
+      hashtable_entry_t *entry = TABLE_HEAD(ht, i);
+      int j = 0; // debug
+      while (entry) {
+        DEBUG(" %d key %ld |", ++j, entry->key);
+        hashtable_entry_t *entry_next = ENTRY_NEXT(entry);
+        hashtable_destroy_entry(ht, entry);
+        ht->nentries--;
+        entry = entry_next;
+      }
       DEBUG("\n");
     }
 
