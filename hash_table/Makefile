@@ -1,19 +1,20 @@
 
 
-PROG=hash
+# PROG=hash
 
-OBJS= main.o \
-			hashtable.o
-
-CFLAGS= -Wall -Wextra -pedantic -ggdb -std=c99 -O0
+CFLAGS= -Wall -Wextra -pedantic -ggdb -std=c99
 # CPPFLAGS= -DNDEBUG
-CC=cc
+CC=gcc
 
-$(PROG): $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $@
+# $(PROG): $(OBJS)
+# 	$(CC) $(CFLAGS) $^ -o $@
 
-test: hashtable.o test.o
-	$(CC) $(CFLAGS) $^ -o $@
+# implicity rules
+ht2array: ht2array.o hashtable.o
+
+test: test.o hashtable.o
+
+jhash: jhash.o hashtable.o
 
 %.o: %.c
 	 $(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
