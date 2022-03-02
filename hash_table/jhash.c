@@ -6,6 +6,7 @@
 
 #include "hashtable.h"
 #include "jhash.h"
+#include "../cycle_counting.h"
 
 #define TOT_VALUES 10
 
@@ -117,6 +118,22 @@ int main( void )
 {
   // test_int();
   test_data();
+
+  int a[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  counter_T cnt;
+
+  cnt = BEGIN_TSC();
+  uint32_t hash = jhash8( a, sizeof(a), 1);
+  cnt = END_TSC(cnt);
+
+  printf("hash8: hash - %d - cycles - %ld\n", hash, cnt);
+
+  cnt = BEGIN_TSC();
+  hash = jhash32( (uint32_t *) a, sizeof(a) / sizeof(uint32_t), 1);
+  cnt = END_TSC(cnt);
+
+  printf("hash32: hash - %d - cycles - %ld\n", hash, cnt);
+
 
   return 0;
 }
