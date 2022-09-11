@@ -1,8 +1,30 @@
 
+/*
+ *  Copyright (C) 2021 Mayco S. Berghetti
+ *
+ *  This file is part of Netproc.
+ *
+ *  Netproc is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+// based implementation python
+// https://github.com/python/cpython/blob/main/Python/hashtable.c
+
 #include <stdlib.h>
+#include "hashtable.h"
 
 #include "debug.h"
-#include "hashtable.h"
 
 #define HASHTABLE_MIN_SIZE 16
 #define HASHTABLE_HIGH 0.75
@@ -78,11 +100,17 @@ hashtable_rehash ( hashtable_t *ht )
   return 1;
 }
 
+static inline
+size_t get_index( hash_t hash, size_t size )
+{
+  return ( hash & ( size - 1 ) );
+}
+
 static hashtable_entry_t *
-hashtable_get_entry ( hashtable_t *restrict ht, const void *key )
+hashtable_get_entry ( hashtable_t *restrict ht, const void *restrict key )
 {
   hash_t hash = ht->fhash ( key );
-  size_t index = hash & ( ht->nbuckets - 1 );
+  size_t index = get_index( hash, ht->nbuckets );
 
   hashtable_entry_t *entry = TABLE_HEAD ( ht, index );
   while ( entry )
@@ -143,14 +171,14 @@ hashtable_set ( hashtable_t *restrict ht, const void *key, void *value )
         }
     }
 
-  size_t index = entry->key_hash & ( ht->nbuckets - 1 );
+  size_t index = get_index( entry->key_hash, ht->nbuckets );
   hashtable_preprend ( &ht->buckets[index], ( slist_item_t * ) entry );
 
   return value;
 }
 
 void *
-hashtable_get ( hashtable_t *restrict ht, const void *key )
+hashtable_get ( hashtable_t *restrict ht, const void *restrict key )
 {
   hashtable_entry_t *entry = hashtable_get_entry ( ht, key );
   if ( entry )
@@ -190,10 +218,10 @@ void *
 hashtable_remove ( hashtable_t *ht, const void *key )
 {
   hash_t hash = ht->fhash ( key );
-  size_t index = hash & ( ht->nbuckets - 1 );
+  size_t index = get_index( hash, ht->nbuckets );
 
   hashtable_entry_t **entry = PP_TABLE_HEAD ( ht, index );
-  while ( *entry && !ht->fcompare ( ( *entry )->key, key ) )
+  while ( *entry && (*entry)->key_hash != hash && !ht->fcompare ( ( *entry )->key, key ) )
     entry = PP_ENTRY_NEXT ( *entry );
 
   if ( *entry == NULL )
@@ -220,6 +248,7 @@ hashtable_destroy_entry ( hashtable_t *ht, hashtable_entry_t *entry )
 
   free ( entry );
 }
+
 void hashtable_destroy(hashtable_t *ht) {
 
   for (size_t i = 0; i < ht->nbuckets; i++)
