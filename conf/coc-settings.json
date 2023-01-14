@@ -1,0 +1,7 @@
+{
+    "languageserver": {
+    },
+    "clangd.path": "~/.config/coc/extensions/coc-clangd-data/install/15.0.6/clangd_15.0.6/bin/clangd",
+    "clangd.disableDiagnostics": true, // disable lintier
+     "inlayHint.enable": false // disable show paramaters in functions
+}
