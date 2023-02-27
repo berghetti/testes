@@ -6,9 +6,23 @@ from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 # plt.style.use('seaborn-v0_8-dark-palette')
 
 
+def font(v):
+  # plt.rc('font', **v)
+  # params = {
+  #    'legend.fontsize': 'x-large',
+  #    'axes.labelsize': 50,
+  #    'axes.titlesize': 'xx-large',
+  #    'xtick.labelsize': 50,
+  #    'ytick.labelsize': 'xx-large'
+  # }
+
+  plt.rcParams.update(v)
+
+
 class chart:
   def __init__(self):
-    self.fig, self.ax = plt.subplots(1, 1, dpi=200)
+
+    self.fig, self.ax = plt.subplots(1, 1, dpi=100)
 
   def datasets(self, v):
     pass
@@ -45,6 +59,9 @@ class chart:
                  linestyle=v['linestyle'],
                  linewidth=v['linewidth'])
 
+  def legend(self, v):
+    plt.legend(loc=v['loc'])
+
   def save(self, v):
     self.fig.savefig(self.config['save'])
 
@@ -56,14 +73,17 @@ class chart:
 
 class line(chart):
   def __init__(self, config):
-    super().__init__()
     self.config = config
+    if config['font']:
+      font(config['font'])
+      del config['font']
+    super().__init__()
 
     # call all functions in config dict
     for func, value in self.config.items():
       if not value:
         continue
-
+      # print(func)
       try:
         f = getattr(self, func)
         f(value)
@@ -80,5 +100,3 @@ class line(chart):
                    lw=dataset['linewidth'],
                    marker=dataset['marker'],
                    ms=dataset['markersize'])
-
-    plt.legend(loc='best')
