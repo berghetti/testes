@@ -49,6 +49,14 @@ config = {
     'xlabel': 'Throughput (MRPS)',
     'ylabel': 'Latência 99,9% (us)',
 
+    'font': {
+        'font.size':15,
+        'axes.labelsize': 15,
+        'axes.titlesize': 15,
+        'xtick.labelsize': 15,
+        'ytick.labelsize': 15,
+    },
+
     'grid': {
         'which': 'major',
         'color': '#ccc',
@@ -61,6 +69,13 @@ config = {
         'xminor': 0.5,
         'ymajor': 50,
         'yminor': 25,
+    },
+
+    'legend': {
+        'loc': 'upper left',
+        'title': 'Políticas',
+        'title_fontsize' : 12,
+        'fontsize': 10,
     },
 
     'ylim': [0, 500],

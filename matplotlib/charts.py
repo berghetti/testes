@@ -7,22 +7,13 @@ from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 
 
 def font(v):
-  # plt.rc('font', **v)
-  # params = {
-  #    'legend.fontsize': 'x-large',
-  #    'axes.labelsize': 50,
-  #    'axes.titlesize': 'xx-large',
-  #    'xtick.labelsize': 50,
-  #    'ytick.labelsize': 'xx-large'
-  # }
-
   plt.rcParams.update(v)
 
 
 class chart:
   def __init__(self):
 
-    self.fig, self.ax = plt.subplots(1, 1, dpi=100)
+    self.fig, self.ax = plt.subplots(1, 1, dpi=200)
 
   def datasets(self, v):
     pass
@@ -60,10 +51,10 @@ class chart:
                  linewidth=v['linewidth'])
 
   def legend(self, v):
-    plt.legend(loc=v['loc'])
+    plt.legend(**v)
 
   def save(self, v):
-    self.fig.savefig(self.config['save'])
+    self.fig.savefig(self.config['save'], bbox_inches='tight')
 
   def show(self, v):
     if v == 'y' or v == 'Y':

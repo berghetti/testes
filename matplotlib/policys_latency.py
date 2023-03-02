@@ -12,14 +12,6 @@ def get_data(file, tr, l999):
       l999.append(int(float(row['99.9% Tail Latency'])) / 1000)
 
 
-def get_data_slowdown(file, tr, slowdown):
-  with open(file, newline='') as f:
-    reader = csv.DictReader(f)
-    for row in reader:
-      tr.append(float(row['Throughput']) / 1e6)
-      slowdown.append(float(row['Slowdown99.9%']))
-
-
 dfcfs_troughput = []
 dfcfc_999 = []
 get_data('policys/dfcfs.csv', dfcfs_troughput, dfcfc_999)
@@ -58,7 +50,7 @@ persephone = {
 fap = {
     'x': fap_troughput,
     'y': fap_999,
-    'label': 'F.A.P',
+    'label': 'A.F.P',
     'color': 'blue',
     'linestyle': '-',
     'linewidth': 2.0,
@@ -66,9 +58,19 @@ fap = {
     'markersize': 5.0
 }
 config = {
+
     'datasets': [dfcfs, persephone, fap],
     'xlabel': 'Throughput (MRPS)',
     'ylabel': 'Latência 99,9% (us)',
+
+    'font': {
+        'font.size':15,
+        'axes.labelsize': 15,
+        'axes.titlesize': 15,
+        'xtick.labelsize': 15,
+        'ytick.labelsize': 15,
+    },
+
 
     'grid': {
         'which': 'major',
@@ -84,9 +86,16 @@ config = {
         'yminor': 25,
     },
 
+    'legend': {
+        'loc': 'best',
+        #'title': 'Políticas',
+        'title_fontsize' : 12,
+        'fontsize': 10,
+    },
+
     'ylim': [0, 500],
     # 'xlim': [min(overhead), 220],  # max(overhead) + 10],
-    'save': 'policys_comparation.png',
+    'save': 'policys_comparation.pdf',
     'show': 'y'
 }
 

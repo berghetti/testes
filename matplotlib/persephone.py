@@ -55,6 +55,14 @@ config = {
     'xlabel': 'Sobrecarga em nanossegundos',
     'ylabel': 'Latência 99,9% (us)',
 
+    'font': {
+        'font.size':15,
+        'axes.labelsize': 12,
+        'axes.titlesize': 12,
+        'xtick.labelsize': 12,
+        'ytick.labelsize': 12,
+    },
+
     'grid': {
         'which': 'major',
         'color': '#ccc',
@@ -69,9 +77,16 @@ config = {
         'yminor': 25,
     },
 
+    'legend': {
+        'loc': 'best',
+        #'title': 'Requisições',
+        'title_fontsize' : 12,
+        'fontsize': 10,
+    },
+
     'ylim': [0, 500],
     'xlim': [min(overhead), 220],  # max(overhead) + 10],
-    'save': 'persephone_overhead.png',
+    'save': 'persephone_overhead.pdf',
     'show': 'y'
 }
 

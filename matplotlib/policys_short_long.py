@@ -27,7 +27,7 @@ get_data('policys/fap_simple.csv', fap_troughput, fap_short, fap_long)
 persephone_s = {
     'x': persephone_troughput,
     'y': persephone_short,
-    'label': 'Requisições curtas (Persephone)',
+    'label': 'Curtas (Persephone)',
     'color': 'green',
     'linestyle': '-',
     'linewidth': 2.0,
@@ -38,18 +38,18 @@ persephone_s = {
 persephone_l = {
     'x': persephone_troughput,
     'y': persephone_long,
-    'label': 'Requisições longas (Persephone)',
+    'label': 'Longas (Persephone)',
     'color': 'green',
     'linestyle': '--',
     'linewidth': 2.0,
-    'marker': '*',
+    'marker': 'o',
     'markersize': 5.0
 }
 
 fap_s = {
     'x': fap_troughput,
     'y': fap_short,
-    'label': 'Requisições curtas (F.A.P)',
+    'label': 'Curtas (F.A.P)',
     'color': 'blue',
     'linestyle': '-',
     'linewidth': 2.0,
@@ -60,17 +60,25 @@ fap_s = {
 fap_l = {
     'x': fap_troughput,
     'y': fap_long,
-    'label': 'Requisições longas (F.A.P)',
+    'label': 'Longas (F.A.P)',
     'color': 'blue',
     'linestyle': '--',
     'linewidth': 2.0,
-    'marker': '*',
+    'marker': 'o',
     'markersize': 5.0
 }
 config = {
     'datasets': [persephone_s, persephone_l, fap_s, fap_l],
     'xlabel': 'Throughput (MRPS)',
     'ylabel': 'Latência 99,9% (us)',
+
+    'font': {
+        'font.size':15,
+        'axes.labelsize': 15,
+        'axes.titlesize': 15,
+        'xtick.labelsize': 15,
+        'ytick.labelsize': 15,
+    },
 
     'grid': {
         'which': 'major',
@@ -84,6 +92,13 @@ config = {
         'xminor': 0.5,
         'ymajor': 50,
         'yminor': 25,
+    },
+
+    'legend': {
+        'loc': 'best',
+        'title': 'Requisições',
+        'title_fontsize' : 12,
+        'fontsize': 10,
     },
 
     'ylim': [0, 500],
