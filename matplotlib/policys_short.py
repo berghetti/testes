@@ -4,30 +4,36 @@ import charts
 import csv
 
 
-def get_data(file, tr, l999):
+def get_data_throughput(file, buff ):
   with open(file, newline='') as f:
     reader = csv.DictReader(f)
     for row in reader:
-      tr.append(float(row['Throughput']) / 1e6)
-      l999.append(int(float(row['99.9% Tail Latency'])) / 1000)
+      buff.append(float(row['Throughput']) / 1e6)
 
+def get_data_lat(file, buff):
+  with open(file, newline='') as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+      buff.append(int(float(row['latency_short 99.9%'])) / 1000)
 
 dfcfs_troughput = []
-dfcfc_999 = []
-get_data('policys/dfcfs.csv', dfcfs_troughput, dfcfc_999)
+dfcfs_lat = []
+get_data_throughput('policys/dfcfs.csv', dfcfs_troughput,)
+get_data_lat('policys/dfcfs.csv', dfcfs_lat)
 
 persephone_troughput = []
-persephone_999 = []
-
-get_data('policys/persephone.csv', persephone_troughput, persephone_999)
+persephone_lat = []
+get_data_throughput('policys/persephone.csv', persephone_troughput)
+get_data_lat('policys/persephone.csv', persephone_lat)
 
 fap_troughput = []
-fap_999 = []
-get_data('policys/fap_simple.csv', fap_troughput, fap_999)
+fap_lat = []
+get_data_throughput('policys/afp.csv', fap_troughput)
+get_data_lat('policys/afp.csv', fap_lat)
 
 dfcfs = {
     'x': dfcfs_troughput,
-    'y': dfcfc_999,
+    'y': dfcfs_lat,
     'label': 'd-FCFS',
     'color': 'red',
     'linestyle': '-',
@@ -38,7 +44,7 @@ dfcfs = {
 
 persephone = {
     'x': persephone_troughput,
-    'y': persephone_999,
+    'y': persephone_lat,
     'label': 'Persephone',
     'color': 'green',
     'linestyle': '-',
@@ -49,7 +55,7 @@ persephone = {
 
 fap = {
     'x': fap_troughput,
-    'y': fap_999,
+    'y': fap_lat,
     'label': 'A.F.P',
     'color': 'blue',
     'linestyle': '-',
@@ -66,7 +72,7 @@ config = {
     'font': {
         'font.size':15,
         'axes.labelsize': 15,
-        'axes.titlesize': 15,
+        'axes.titlesize': 10,
         'xtick.labelsize': 15,
         'ytick.labelsize': 15,
     },
@@ -80,9 +86,9 @@ config = {
     },
 
     'set_ticks': {
-        'xmajor': 1,
+        'xmajor': 2,
         'ymajor': 50,
-        'xminor': 0.5,
+        'xminor': 1,
         'yminor': 25,
     },
 
@@ -93,10 +99,15 @@ config = {
         'fontsize': 10,
     },
 
+    'title':{
+        'label': 'Requisições curtas (1 us)',
+        'loc': 'center'
+    },
+
     'ylim': [0, 500],
     # 'xlim': [min(overhead), 220],  # max(overhead) + 10],
-    #'save': 'policys_comparation.pdf',
-    'show': 'y'
+    'save': 'imgs/policys_short_title.png',
+    #'show': 'y'
 }
 
 c = charts.line(config)

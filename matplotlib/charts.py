@@ -18,6 +18,9 @@ class chart:
   def datasets(self, v):
     pass
 
+  def title(self, v):
+    self.ax.set_title(**v)
+
   def set_ticks(self, v):
     if v['xmajor']:
       self.ax.xaxis.set_major_locator(MultipleLocator(v['xmajor']))
