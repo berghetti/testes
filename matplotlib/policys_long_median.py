@@ -14,7 +14,7 @@ def get_data_lat(file, buff):
   with open(file, newline='') as f:
     reader = csv.DictReader(f)
     for row in reader:
-      buff.append(int(float(row['latency_short 99.9%'])) / 1000)
+      buff.append(int(float(row['50% latency_long'])) / 1000)
 
 dfcfs_troughput = []
 dfcfs_lat = []
@@ -67,7 +67,7 @@ config = {
 
     'datasets': [dfcfs, persephone, fap],
     'xlabel': 'Throughput (MRPS)',
-    'ylabel': 'Latência 99,9% (us)',
+    'ylabel': 'Latência 50% (us)',
 
     'font': {
         'font.size':15,
@@ -100,13 +100,13 @@ config = {
     },
 
     'title':{
-        'label': 'Requisições curtas (1 us)',
-        'loc': 'center'
+        #'label': 'Requisições longas (100 us)',
+        #'loc': 'center'
     },
 
     'ylim': [0, 500],
     # 'xlim': [min(overhead), 220],  # max(overhead) + 10],
-    'save': 'imgs/policys_short_title.png',
+    'save': 'imgs/policys_long_median.pdf',
     #'show': 'y'
 }
 

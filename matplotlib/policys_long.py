@@ -56,7 +56,7 @@ persephone = {
 fap = {
     'x': fap_troughput,
     'y': fap_lat,
-    'label': 'A.F.P',
+    'label': 'AFP',
     'color': 'blue',
     'linestyle': '-',
     'linewidth': 2.0,
@@ -100,14 +100,14 @@ config = {
     },
 
     'title':{
-        'label': 'Requisições longas (100 us)',
-        'loc': 'center'
+        #'label': 'Requisições longas (100 us)',
+        #'loc': 'center'
     },
 
     'ylim': [0, 500],
     # 'xlim': [min(overhead), 220],  # max(overhead) + 10],
-    'save': 'imgs/policys_long_title.png',
-    'show': 'y'
+    'save': 'imgs/policys_long.png',
+    #'show': 'y'
 }
 
 c = charts.line(config)
