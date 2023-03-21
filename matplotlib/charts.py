@@ -3,7 +3,8 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 
-# plt.style.use('seaborn-v0_8-dark-palette')
+#plt.style.use('seaborn-v0_8-dark-palette')
+#plt.style.use('ggplot')
 
 
 def font(v):
@@ -11,7 +12,13 @@ def font(v):
 
 
 class chart:
-  def __init__(self):
+  def __init__(self, config):
+    self.config = config
+
+    # should be first
+    if config['font']:
+      font(config['font'])
+      del config['font']
 
     self.fig, self.ax = plt.subplots(1, 1, dpi=200)
 
@@ -47,11 +54,7 @@ class chart:
     self.ax.set_ylim(self.config['ylim'])
 
   def grid(self, v):
-    self.ax.grid(True,
-                 which=v['which'],
-                 color=v['color'],
-                 linestyle=v['linestyle'],
-                 linewidth=v['linewidth'])
+    self.ax.grid(v['visible'], v['which'], **v['style'])
 
   def legend(self, v):
     plt.legend(**v)
@@ -67,11 +70,7 @@ class chart:
 
 class line(chart):
   def __init__(self, config):
-    self.config = config
-    if config['font']:
-      font(config['font'])
-      del config['font']
-    super().__init__()
+    super().__init__(config)
 
     # call all functions in config dict
     for func, value in self.config.items():
@@ -87,10 +86,10 @@ class line(chart):
 
   def datasets(self, v):
     for dataset in v:
-      self.ax.plot(dataset['x'], dataset['y'],
-                   label=dataset['label'],
-                   c=dataset['color'],
-                   ls=dataset['linestyle'],
-                   lw=dataset['linewidth'],
-                   marker=dataset['marker'],
-                   ms=dataset['markersize'])
+      self.ax.plot(dataset['x'],
+                     dataset['y'],
+                     **dataset['style'])
+
+      if dataset['errorbar']:
+        self.ax.errorbar(**dataset['errorbar'])
+
