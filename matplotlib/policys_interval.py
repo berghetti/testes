@@ -155,7 +155,8 @@ config = {
     'datasets': [dfcfs,persephone, afp],
     #'datasets': [dfcfs],
     'xlabel': 'Throughput (MRPS)',
-    'ylabel': 'Latência 50% (us)',
+    #'ylabel': 'Latência 99,9% (us)',
+    'ylabel': sys.argv[4],
 
     'font': {
         'font.size':15,
@@ -183,7 +184,8 @@ config = {
     },
 
     'title':{
-        'label': 'Requisições longas (100 us)',
+        #'label': 'Requisições longas (100 us)',
+        'label': sys.argv[3],
         'loc':'center',
     },
 
@@ -197,7 +199,7 @@ config = {
     'ylim': [0, 500],
     'xlim': [0, 16],
     'save': 'imgs/{}'.format(sys.argv[2]),
-    'show': 'y'
+    #'show': 'y'
 }
 
 #name_save = sys.argv[2]
