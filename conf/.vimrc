@@ -1,11 +1,11 @@
 
-
 " Global configurations
 syntax on            " Enable syntax highlight
 set nu               " Enable line numbers
-set tabstop=2        " Show existing tab with 2 spaces width
+set tabstop=4        " Show existing tab with 4 spaces width
 set softtabstop=2    " Show existing tab with 2 spaces width
 set shiftwidth=2     " When indenting with '>', use 2 spaces width
+set autoindent
 set expandtab        " On pressing tab, insert 2 spaces
 set smarttab         " insert tabs on the start of a line according to shiftwidth
 set smartindent      " Automatically inserts one extra level of indentation in some cases
@@ -46,7 +46,8 @@ call plug#begin()
  Plug 'jiangmiao/auto-pairs' "automatic close ([{ ...
  Plug 'dense-analysis/ale' " clang-format support
  Plug 'neoclide/coc.nvim' , { 'branch' : 'release' } "auto complete and others
- Plug 'honza/vim-snippets'
+ Plug 'honza/vim-snippets',
+ Plug 'tell-k/vim-autopep8' " Python format code
  if (has("nvim"))
     Plug 'BurntSushi/ripgrep'
     Plug 'sharkdp/fd'
@@ -97,11 +98,21 @@ nmap <silent> vv :vsplit<CR>
 " apt install ctags && ctags -R project/src
 nmap <silent> gd <C-]>
 " same above, but open in vertical split
-map <silent> gdv :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+map <silent> gdv :vsplit <CR>:exec("tag ".expand("<cword>"))<CR>
 
 "goback of implementation
 nmap <silent> gb <C-T>
 
+"move current buffer to new tab
+nmap nt <C-w> <S-T>
+
+"exit termnal mode
+tnoremap <Esc> <C-\><C-n>
+
+"copy to clipboard
+nnoremap Y "+y
+vnoremap Y "+y
+nnoremap yY ^"+y$
 """""""""""""""""""""""""""""""""""""""
 
 "map to nerdtree
@@ -126,21 +137,32 @@ endif
 let g:ale_linters = {
 \   'cpp': [],
 \   'c': [],
+\   'python': [],
 \}
+"\   'python': ['flake8'],
 
 let g:ale_fixers = {
 \   '*': ['trim_whitespace'],
 \   'cpp': ['clang-format'],
 \   'c': ['clang-format'],
 \}
+let g:ale_c_clangformat_options = '"-style={BasedOnStyle: gnu}"'
 
 " format code on save
 let g:ale_fix_on_save = 1
 
+" Python """"""""""""""""""""""""""""""""""""""""""""""
+"let g:ale_python_flake8_options = '--max-line-length=80 --extend-ignore=E203'
+let g:autopep8_on_save = 1
+let g:autopep8_disable_show_diff=1
+let g:autopep8_indent_size=2
+autocmd FileType python setlocal noexpandtab shiftwidth=2 softtabstop=2
 
 "Plugins CoC
 " clangd show lintier
 let g:coc_global_extensions = [ 'coc-snippets', 'coc-clangd' ]
+
+let g:clang_library_path='/usr/lib/llvm-15/lib/libclang.so.1'
 
 "Config coc.nvim
 " https://github.com/neoclide/coc-snippets
