@@ -1,16 +1,14 @@
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 
-#define DUP( code ) code, code 
+#define DUP(code) code, code
 
 int
-main ( int argc, char **argv )
+main (int argc, char **argv)
 {
-
-  int dummy;
-
-  DUP(dummy);
-
+  int i, j;
+  while (i || j)
+    i++, j++;
 }
