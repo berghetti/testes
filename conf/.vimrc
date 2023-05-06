@@ -146,9 +146,11 @@ let g:ale_fixers = {
 \   'cpp': ['clang-format'],
 \   'c': ['clang-format'],
 \}
-let g:ale_c_clangformat_options = '"-style={BasedOnStyle: gnu}"'
 
-" format code on save
+" clang format options
+let g:ale_c_clangformat_options = ''
+let g:ale_c_clangformat_style_options = '"-style={BasedOnStyle: gnu}"'
+let g:ale_c_clangformat_use_local_file = 1
 let g:ale_fix_on_save = 1
 
 " Python """"""""""""""""""""""""""""""""""""""""""""""
