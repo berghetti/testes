@@ -1,4 +1,3 @@
-
 " Global configurations
 syntax on            " Enable syntax highlight
 set nu               " Enable line numbers
@@ -27,7 +26,7 @@ set splitbelow       " Create the horizontal splits below
 set autoread         " Update vim after file update from outside
 set mouse=a          " Enable mouse support
 set nohlsearch       " disable highlight search
-set path=.,/usr/lib/gcc/x86_64-linux-gnu/12/include,/usr/local/include,/usr/include/x86_64-linux-gnu,/usr/include
+set path=.,/usr/lib/gcc/x86_64-linux-gnu/9/include,/usr/local/include,/usr/include/x86_64-linux-gnu,/usr/include
 filetype on          " Detect and set the filetype option and trigger the FileType Event
 filetype plugin on   " Load the plugin file for the file type, if any
 filetype indent on   " Load the indent file for the file type, if any
@@ -39,15 +38,15 @@ call plug#begin()
  Plug 'vim-airline/vim-airline'
  Plug 'vim-airline/vim-airline-themes'
  Plug 'sheerun/vim-polyglot' "Syntax highlight most languages
- Plug 'preservim/nerdtree' "File explorer, usage with ctrl+a (with map)
- Plug 'Xuyuanp/nerdtree-git-plugin'
- Plug 'tiagofumo/vim-nerdtree-syntax-highlight' "some visual elements in nerdtree
- Plug 'ryanoasis/vim-devicons' "dependency to nerdtree syntax
+ "Plug 'preservim/nerdtree' "File explorer, usage with ctrl+a (with map)
+ "Plug 'Xuyuanp/nerdtree-git-plugin'
+ "Plug 'tiagofumo/vim-nerdtree-syntax-highlight' "some visual elements in nerdtree
+ "Plug 'ryanoasis/vim-devicons' "dependency to nerdtree syntax
  Plug 'jiangmiao/auto-pairs' "automatic close ([{ ...
  Plug 'dense-analysis/ale' " clang-format support
  Plug 'neoclide/coc.nvim' , { 'branch' : 'release' } "auto complete and others
  Plug 'honza/vim-snippets',
- Plug 'tell-k/vim-autopep8' " Python format code
+ "Plug 'tell-k/vim-autopep8' " Python format code
  if (has("nvim"))
     Plug 'BurntSushi/ripgrep'
     Plug 'sharkdp/fd'
@@ -117,7 +116,7 @@ nnoremap yY ^"+y$
 
 "map to nerdtree
 "Open file explorer with ctrl+a
-nmap <C-a> :NERDTreeToggle<CR>
+"nmap <C-a> :NERDTreeToggle<CR>
 
 "Navegate between split buffers with ctrl + arrow keys
 nmap <silent> <C-Right> <c-w>l
@@ -147,10 +146,11 @@ let g:ale_fixers = {
 \   'c': ['clang-format'],
 \}
 
-" clang format options
 let g:ale_c_clangformat_options = ''
-let g:ale_c_clangformat_style_options = '"-style={BasedOnStyle: gnu}"'
+let g:ale_c_clangformat_style_options = '"{BasedOnStyle: gnu}"'
 let g:ale_c_clangformat_use_local_file = 1
+
+" format code on save
 let g:ale_fix_on_save = 1
 
 " Python """"""""""""""""""""""""""""""""""""""""""""""
@@ -165,6 +165,8 @@ autocmd FileType python setlocal noexpandtab shiftwidth=2 softtabstop=2
 let g:coc_global_extensions = [ 'coc-snippets', 'coc-clangd' ]
 
 let g:clang_library_path='/usr/lib/llvm-15/lib/libclang.so.1'
+
+let g:coc_disable_startup_warning = 1
 
 "Config coc.nvim
 " https://github.com/neoclide/coc-snippets
