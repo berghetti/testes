@@ -51,7 +51,7 @@ call plug#begin()
     Plug 'BurntSushi/ripgrep'
     Plug 'sharkdp/fd'
     Plug 'nvim-lua/plenary.nvim'
-    Plug 'nvim-telescope/telescope.nvim'
+    Plug 'nvim-telescope/telescope.nvim', {'branch': '0.1.x'} "use old version. New version need neovim 0.9.x, but in ubuntu pachakges nvim is 0.7.x
  endif
 call plug#end()
 
