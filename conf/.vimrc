@@ -1,7 +1,7 @@
 " Global configurations
 syntax on            " Enable syntax highlight
 set nu               " Enable line numbers
-set tabstop=4        " Show existing tab with 4 spaces width
+set tabstop=2        " Show existing tab with 4 spaces width
 set softtabstop=2    " Show existing tab with 2 spaces width
 set shiftwidth=2     " When indenting with '>', use 2 spaces width
 set autoindent
