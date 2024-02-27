@@ -162,7 +162,7 @@ autocmd FileType python setlocal noexpandtab shiftwidth=2 softtabstop=2
 
 "Plugins CoC
 " clangd show lintier
-let g:coc_global_extensions = [ 'coc-snippets', 'coc-clangd' ]
+let g:coc_global_extensions = [ 'coc-snippets' ]
 
 let g:clang_library_path='/usr/lib/llvm-15/lib/libclang.so.1'
 
