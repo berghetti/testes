@@ -38,7 +38,7 @@ install_plug()
 
 install_conf()
 {
-  curl -LOs https://raw.githubusercontent.com/berghetti/testes/master/conf/.vimrc
+  curl -LOs https://github.com/berghetti/testes/raw/master/nvim/.vimrc
   mv .vimrc ~/.vimrc
   mkdir -p ~/.config/nvim/
   echo -e 'set runtimepath^=~/.vim runtimepath+=~/.vim/after\n'\
