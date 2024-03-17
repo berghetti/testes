@@ -7,6 +7,7 @@ install_nodejs()
 
 install_requeriments()
 {
+  sudo apt update
   sudo apt install -y git xz-utils ripgrep clang-format
   install_nodejs
 }
