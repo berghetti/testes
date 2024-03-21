@@ -146,8 +146,8 @@ let g:ale_fixers = {
 \   'c': ['clang-format'],
 \}
 
-let g:ale_c_clangformat_options = ''
-let g:ale_c_clangformat_style_options = '"{BasedOnStyle: gnu}"'
+let g:ale_c_clangformat_options = '-fallback-style=GNU'
+let g:ale_c_clangformat_style_options = '"{BasedOnStyle: GNU}"'
 let g:ale_c_clangformat_use_local_file = 1
 
 " format code on save
