@@ -1,5 +1,6 @@
 Working on:
-  Ubuntu 20.04
+  - Ubuntu 20.04
+  - Ubuntu 24.04
 
 # Install
 ```
