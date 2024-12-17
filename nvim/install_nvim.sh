@@ -15,8 +15,6 @@ install_requeriments()
   install_nodejs
 }
 
-
-
 install_neovim()
 {
   curl -LOs $NVIM
