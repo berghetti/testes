@@ -1,7 +1,7 @@
 #!/bin/bash
 set -xe
 
-NVIM=https://github.com/neovim/neovim/releases/download/v0.10.2/nvim-linux64.tar.gz
+NVIM="https://github.com/neovim/neovim/releases/download/v0.10.2/nvim-linux64.tar.gz"
 
 install_nodejs()
 {
@@ -52,7 +52,7 @@ install_conf()
 # Ubuntu
 VERSION=$(grep -oP '(?<=VERSION_ID=")\d+' /etc/os-release)
 if [[ $VERSION -lt 20 ]]; then
-  NVIM=https://github.com/neovim/neovim/releases/download/v0.7.2/nvim-linux64.tar.gz
+  NVIM="ttps://github.com/neovim/neovim/releases/download/v0.7.2/nvim-linux64.tar.gz"
 fi
 
 install_requeriments
