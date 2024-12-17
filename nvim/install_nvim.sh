@@ -19,13 +19,9 @@ install_requeriments()
 
 install_neovim()
 {
-  if [ -x /opt/nvim-linux64/bin/nvim ]; then
-    return
-  fi
-
   curl -LOs $NVIM
   curl -LOs 
-  sudo rm -rf /opt/nvim
+  sudo rm -rf /opt/nvim/
   sudo tar -C /opt -xzf nvim-linux64.tar.gz
   sudo rm nvim-linux64.tar.gz
 
