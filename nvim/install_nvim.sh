@@ -18,9 +18,9 @@ install_requeriments()
   sudo apt update
   sudo apt install -y git xz-utils ripgrep clang-format
   if [[ $VERSION -lt 20 ]]; then
-    curl -LOs https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep_14.1.0_amd64.deb
-    sudo dpkg -i ripgrep_14.1.0_amd64.deb
-    rm ripgrep_14.1.0_amd64.deb
+    curl -LOs https://github.com/BurntSushi/ripgrep/releases/download/14.0.3/ripgrep_14.0.3-1_amd64.deb
+    sudo apt install ./ripgrep_14.0.3-1_amd64.deb
+    rm ripgrep_14.0.3-1_amd64.deb
   fi
   install_nodejs
 }
