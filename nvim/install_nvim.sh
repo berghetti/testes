@@ -1,4 +1,5 @@
 #!/bin/bash
+set -xe
 
 NVIM=https://github.com/neovim/neovim/releases/download/v0.10.2/nvim-linux64.tar.gz
 
