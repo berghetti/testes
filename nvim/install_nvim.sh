@@ -1,11 +1,16 @@
 #!/bin/bash
 set -x
 
-NVIM="https://github.com/neovim/neovim/releases/download/v0.10.2/nvim-linux64.tar.gz"
+# Ubuntu
+VERSION=$(grep -oP '(?<=VERSION_ID=")\d+' /etc/os-release)
 
 install_nodejs()
 {
-  curl -sL install-node.vercel.app/lts | sudo bash -s -- --yes
+  if [[ $VERSION -lt 20 ]]; then
+    curl -sL install-node.vercel.app/16 | sudo bash -s -- --yes
+  else
+    curl -sL install-node.vercel.app/22 | sudo bash -s -- --yes
+  fi
 }
 
 install_requeriments()
@@ -17,6 +22,11 @@ install_requeriments()
 
 install_neovim()
 {
+  if [[ $VERSION -lt 20 ]]; then
+    NVIM="https://github.com/neovim/neovim/releases/download/v0.7.2/nvim-linux64.tar.gz"
+  else
+    NVIM="https://github.com/neovim/neovim/releases/download/v0.10.2/nvim-linux64.tar.gz"
+  fi
   curl -LOs $NVIM
   sudo rm -rf /opt/nvim/
   sudo tar -C /opt -xzf nvim-linux64.tar.gz
@@ -48,11 +58,8 @@ install_conf()
 
 }
 
-# Ubuntu
-VERSION=$(grep -oP '(?<=VERSION_ID=")\d+' /etc/os-release)
-if [[ $VERSION -lt 20 ]]; then
-  NVIM="https://github.com/neovim/neovim/releases/download/v0.7.2/nvim-linux64.tar.gz"
-fi
+
+
 
 install_requeriments
 install_neovim
