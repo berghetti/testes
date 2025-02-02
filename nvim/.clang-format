@@ -6,7 +6,6 @@ AccessModifierOffset: -2
 AlignEscapedNewlines: Left
 AlignTrailingComments: true
 AlignAfterOpenBracket: Align
-AllowAllParametersOfDeclarationOnNextLine: false
 AllowAllArgumentsOnNextLine: false
 AllowShortFunctionsOnASingleLine: All
 AlwaysBreakAfterReturnType: All
